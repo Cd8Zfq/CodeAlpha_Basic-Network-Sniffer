@@ -1,13 +1,14 @@
 from scapy.all import *
-
-def pkt_info(packet):
+#A function that returns info about each packet
+def pkt_info(pkt):
+    #Initialize a dictionary to hold packet information
     info = {
         "direction": None,
-        "src_mac": packet.src,
-        "dst_mac": packet.dst,
-        "src_ip": None,
-        "dst_ip": None,
-        "ip_layer": None,
+        "src_mac": pkt.src, #Source MAC address
+        "dst_mac": pkt.dst, #Destination MAC address
+        "src_ip": None, 
+        "dst_ip": None, 
+        "ip_layer": None, #IP layer type (IPv4 or IPv6)
         "protocol": None,
         "src_port": None,
         "dst_port": None,
@@ -17,50 +18,48 @@ def pkt_info(packet):
     }
     # Get local IP address
     local_ip= get_if_addr(conf.iface)
-    # Determine IP version and layer
-    if packet.haslayer(IP):
+    # Determine IP version
+    if pkt.haslayer(IP):
         info["ip_layer"] = IP
-    elif packet.haslayer(IPv6):
+    elif pkt.haslayer(IPv6):
         info["ip_layer"] = IPv6
     else:
-        return info  # Return available info (MAC addresses)
+        return None
     #Direction of the packet
-    info["direction"]= "IN" if local_ip == packet[info["ip_layer"]].dst else "OUT"
+    info["direction"]= "IN" if local_ip == pkt[info["ip_layer"]].dst else "OUT"
     # Extract IP layer information
-    info["src_ip"] = packet[info["ip_layer"]].src
-    info["dst_ip"] = packet[info["ip_layer"]].dst
-    info["length"] = packet[info["ip_layer"]].len
-
+    info["src_ip"] = pkt[info["ip_layer"]].src
+    info["dst_ip"] = pkt[info["ip_layer"]].dst
+    info["length"] = pkt[info["ip_layer"]].len
     # Process transport layer
-    if packet.haslayer(TCP):
+    if pkt.haslayer(TCP):
         info["protocol"] = "TCP"
-        info["src_port"] = packet[TCP].sport
-        info["dst_port"] = packet[TCP].dport
-        info["flags"] = str(packet[TCP].flags)
-    elif packet.haslayer(UDP):
+        info["src_port"] = pkt[TCP].sport
+        info["dst_port"] = pkt[TCP].dport
+        info["flags"] = str(pkt[TCP].flags)
+    elif pkt.haslayer(UDP):
         info["protocol"] = "UDP"
-        info["src_port"] = packet[UDP].sport
-        info["dst_port"] = packet[UDP].dport
-    elif packet.haslayer(ICMP):
+        info["src_port"] = pkt[UDP].sport
+        info["dst_port"] = pkt[UDP].dport #N.B: UDP does not have flags like TCP
+    elif pkt.haslayer(ICMP):
         info["protocol"] = "ICMP"
-        info["flags"] = str(packet[ICMP].flags)
+        info["flags"] = str(pkt[ICMP].flags)
 
     # Extract payload from Raw layer if present
-    if packet.haslayer(Raw):
+    if pkt.haslayer(Raw):
         try:
-            payload = hexdump(packet[Raw].load, dump=True)
+            payload = hexdump(pkt[Raw].load, dump=True)
             info["payload"] = "\n" + payload
         except Exception:
             pass  # Keep payload as None if extraction fails
 
     return info
 
-def display_pkt(packet):
-    info = pkt_info(packet)
-    # Format ports if available
+def display_pkt(pkt):
+    info = pkt_info(pkt)
     src_port = info["src_port"]
     dst_port = info["dst_port"]
-    port_str = f"{src_port}:{dst_port}"
+    port_str = f"{src_port}:{dst_port}" # Format ports
 
     print(
         f"[{info['direction']}] "
@@ -73,10 +72,10 @@ def display_pkt(packet):
     if info["payload"]:
         print(f"Payload: {info['payload']}")
 
-def displayer(interface=None, packet_count=10):
-    print(f"[*] Starting sniffer on {interface or 'all interfaces'} for {packet_count} packets")
-    sniff(iface=interface, prn=display_pkt, count=packet_count)
+def displayer(interface=None, pkt_count=10):
+    print(f"[*] Starting sniffer on {interface or 'all interfaces'} for {pkt_count} pkts")
+    wrpcap("packets.pcap",sniff(iface=interface, prn=display_pkt, count=pkt_count))
     print("[*] Sniffing complete")
 
 if __name__ == "__main__":
-    displayer(packet_count=50)
+    displayer()
