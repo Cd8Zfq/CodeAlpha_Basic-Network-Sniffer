@@ -1,1 +1,2 @@
-A simple python sniffer which capture TCP, UDP and ICMP packets and display useful info about them
+A simple python sniffer which capture TCP, UDP and ICMP packets and display useful info about them.
+Made as part of my internship in CodeAlpha.
