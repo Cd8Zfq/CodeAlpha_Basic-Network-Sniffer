@@ -72,10 +72,10 @@ def display_pkt(pkt):
     if info["payload"]:
         print(f"Payload: {info['payload']}")
 
-def displayer(interface=None, pkt_count=10):
+def sniffer(interface=None, pkt_count=10): # Sniff packets on the default interface
     print(f"[*] Starting sniffer on {interface or 'all interfaces'} for {pkt_count} pkts")
     wrpcap("packets.pcap",sniff(iface=interface, prn=display_pkt, count=pkt_count))
     print("[*] Sniffing complete")
 
 if __name__ == "__main__":
-    displayer()
+    sniffer()
