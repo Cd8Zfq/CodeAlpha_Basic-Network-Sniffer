@@ -93,4 +93,4 @@ def sniffer(interface=conf.iface, pkt_count=10): # Sniff packets on the current 
     print("[*] Sniffing complete")
 
 if __name__ == "__main__":
-    sniffer(pkt_count=1000)
+    sniffer()
