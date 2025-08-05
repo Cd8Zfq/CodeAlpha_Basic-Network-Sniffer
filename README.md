@@ -10,7 +10,7 @@ A simple python sniffer which capture TCP, UDP and ICMP packets and extracts use
 
     Port numbers
 
-    TCP flags
+    Flags
 
     Payload (if present)
 
