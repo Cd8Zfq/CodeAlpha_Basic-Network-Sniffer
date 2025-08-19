@@ -1,5 +1,6 @@
 #!/bin/bash
-from scapy.all import *
+from scapy.all import get_if_addr, sniff, wrpcap, conf, IP, IPv6, TCP, UDP, ICMP, Raw
+import time
 #A function that returns info about each packet
 def pkt_info(pkt):
     #Initialize a dictionary to hold packet information
@@ -19,7 +20,7 @@ def pkt_info(pkt):
     }
     # Get local IP address
     local_ip= get_if_addr(conf.iface)
-    # Determine IP version
+    #IP version
     if pkt.haslayer(IP):
         info["ip_layer"] = IP
     elif pkt.haslayer(IPv6):
@@ -87,8 +88,8 @@ def sniffer(interface=conf.iface, pkt_count=10): # Sniff packets on the current 
  ___) | | | | |  _|  _|  __/ |                                   
 |____/|_| |_|_|_| |_|  \___|_|                                                             
 """,80*"*")
-    time.sleep(1)
-    print(f"[*] Starting sniffer on {interface or 'all available interfaces'} for {pkt_count} pkts")
+    print(f"[*] Starting sniffer on {interface or 'all available interfaces'} for {pkt_count} pkts...")
+    time.sleep(2)
     wrpcap("packets.pcap",sniff(filter="tcp or udp or icmp",iface=interface, prn=display_pkt, count=pkt_count))
     print("[*] Sniffing complete")
 
