@@ -1,4 +1,3 @@
-#!/bin/bash
 from scapy.all import get_if_addr, sniff, wrpcap, conf, IP, IPv6, TCP, UDP, ICMP, Raw
 import time
 #A function that returns info about each packet
