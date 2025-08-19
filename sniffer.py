@@ -1,3 +1,4 @@
+#!/bin/bash
 from scapy.all import get_if_addr, sniff, wrpcap, conf, IP, IPv6, TCP, UDP, ICMP, Raw
 import time
 #A function that returns info about each packet
@@ -65,7 +66,7 @@ def display_pkt(pkt):
     print(
         f"[{info['direction']}] "
         f"MAC: {info['src_mac']} -> {info['dst_mac']} | "
-        f"IP: {info['src_ip']} -> {info['dst_ip']} | "
+        f"{"IPv4" if info['ip_layer']==IP else "IPv6"}: {info['src_ip']} -> {info['dst_ip']} | "
         f"Proto: {info['protocol'] or 'Unknown'} {port_str} | "
         f"Length: {info['length']} | "
         f"Flags: {info['flags'] or ''}"
@@ -75,7 +76,7 @@ def display_pkt(pkt):
     if info["payload"]:
         print(f"Payload: {info['payload']}")
 
-def sniffer(interface=conf.iface, pkt_count=10): # Sniff packets on the current interface
+def sniffer(interface=conf.iface, pkt_count=250): # Sniff packets on the current interface
     print("*"*80,r"""
  ____            _        _   _      _                      _    
 | __ )  __ _ ___(_) ___  | \ | | ___| |___      _____  _ __| | __
