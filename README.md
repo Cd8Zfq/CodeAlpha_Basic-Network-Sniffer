@@ -14,5 +14,5 @@ A simple python sniffer which capture TCP, UDP and ICMP packets and extracts use
 
     Payload (if present)
 
-Packets are saved in a .pcap file for further analysis with WireShark for example.
+Packets are saved in a .pcap file for further analysis with WireShark if needed.
 Made as part of my internship in CodeAlpha.
